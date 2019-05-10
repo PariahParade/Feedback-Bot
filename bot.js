@@ -20,10 +20,6 @@ client.on('message', message => {
     // Ignore all text from bots to prevent loops
     if (message.author.bot) return;
 
-    // Saving for later.
-    //const args = message.content.slice(prefix.length).split(' ');
-    //const command = args.shift().toLowerCase();
-
     if (message.channel.type == "dm") {
         const officialBizzChannel = client.channels.find(channel => channel.name === "official-bizz");
 
@@ -35,13 +31,9 @@ client.on('message', message => {
             return;
         }
 
-        // Send the message, mentioning the member
-        //channel.send(`${message.author} currently griping about the following: \n\`\`\`${message}\`\`\``);
-
         // Use reactions to poll the user for whether or not they wish this to be anonymous
         var anonymousQuestion = 'Would you like this feedback to be anonymous? Use the reactions to choose. If there is no response within 60 seconds, the feedback will default to anonymous';
         var replyToQuestion = '';
-
 
         message.channel.send(anonymousQuestion).then(myMessage => {
             // Always want them in the order: N | Y
@@ -56,10 +48,12 @@ client.on('message', message => {
             collector.on('collect', (reaction, reactionCollector) => {
                 console.log(`Collected ${reaction.emoji.name}`);
                 switch (reaction.emoji.name){
+                    // If they vote Y, send feedback without author
                     case emojiCharacters.y:
                         message.channel.send('Sending feedback anonymously.');
                         officialBizzChannel.send(`New feedback from Anonymous: \n\`\`\`${message}\`\`\``);
                         break;
+                    // Else add author
                     case emojiCharacters.n:
                         message.channel.send('Sending feedback.');
                         officialBizzChannel.send(`New feedback from ${message.author}: \n\`\`\`${message}\`\`\``);
@@ -67,13 +61,13 @@ client.on('message', message => {
                 }
             });
             
+            // On Timeout
             collector.on('end', collected => {
                 //console.log(`Collected ${collected.size} items`);
                 if (collected.size === 0) {
                     message.channel.send('Response window has timed out. Defaulting to sending feedback anonymously.');
                     officialBizzChannel.send(`New feedback from Anonymous: \n\`\`\`${message}\`\`\``);
                 }
-                // calculate the number of Y an N in case the on.collect errored, maybe?
             });
         });
 
