@@ -1,0 +1,10 @@
+{
+  "name": "feedback-bot",
+  "version": "1.0.0",
+  "description": "Takes DMs and copies them to another channel",
+  "main": "bot.js",
+  "author": "PariahParade",
+  "dependencies": {
+    "discord.js": "^11.4.2"
+  }
+}
